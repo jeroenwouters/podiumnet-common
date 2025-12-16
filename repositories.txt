@@ -1,2 +1,2 @@
-git@github.com:inuits/podiumnet-module.git client-frontend/inuits-dams-graphql-service
-git@github.com:inuits/elody-podiumnet-collection.git client-collection-module
+git@github.com:jeroenwouters/podiumnet-elody-module.git client-frontend/inuits-dams-graphql-service
+git@github.com:jeroenwouters/elody-podiumnet-collection.git client-collection-module
