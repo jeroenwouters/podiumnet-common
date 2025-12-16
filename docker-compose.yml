@@ -52,6 +52,7 @@ services:
       - MINIO_BUCKET
       - APP_ENV=dev
       - OTEL_SDK_DISABLED
+      - AMQP_STORM_APSCHEDULER
     volumes:
       - "../../collection-api/api:/app/api"
       - "./docker-compose/elody/role_scope_mapping.json:/app/role_scope_mapping.json"
