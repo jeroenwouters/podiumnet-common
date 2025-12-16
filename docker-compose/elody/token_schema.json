@@ -1,0 +1,6 @@
+{
+  "id": "email",
+  "email": "email",
+  "preferred_username": "preferred_username",
+  "roles": "resource_access.podiumnet-dashboard.roles"
+}

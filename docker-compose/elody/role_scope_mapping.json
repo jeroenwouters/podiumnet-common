@@ -1,0 +1,29 @@
+{
+  "regular_user": [
+    "add-entity-metadata",
+    "add-entity-relations",
+    "create-entity",
+    "delete-entity",
+    "delete-entity-metadata-key",
+    "delete-entity-relations",
+    "delete-saved-search",
+    "get-entity-permissions",
+    "patch-entity",
+    "patch-entity-metadata",
+    "patch-entity-relations",
+    "patch-saved-search",
+    "read-config",
+    "read-entity",
+    "read-entity-detail-all",
+    "read-entity-metadata-all",
+    "read-entity-metadata-key-all",
+    "read-entity-relations-all",
+    "read-saved-search",
+    "read-saved-search-detail",
+    "update-entity",
+    "update-entity-metadata",
+    "update-entity-relations",
+    "update-saved-search"
+  ],
+  "super_admin": ["has-full-control"]
+}

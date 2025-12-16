@@ -1,0 +1,10 @@
+.DS_Store
+.env
+client-collection-module
+client-frontend/.pnpm-store
+client-frontend/inuits-dams-graphql-service
+client-frontend/inuits-dams-pwa
+client-frontend/node_modules
+client-frontend/packages
+client-graphql-module
+packages

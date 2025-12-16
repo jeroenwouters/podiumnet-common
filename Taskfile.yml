@@ -1,0 +1,50 @@
+version: "3"
+
+tasks:
+  clone-repos:
+    cmds:
+      - |
+        /bin/bash <<'EOF'
+        repos_file="repositories.txt"
+
+        while IFS= read -r line; do
+          url=$(echo "$line" | awk '{print $1}')
+          folder=$(echo "$line" | awk '{print $2}')
+
+          # Check if the folder already exists, if not, then clone
+          if [ ! -d "$folder" ]; then
+            git clone "$url" "$folder"
+          else
+            echo "Repository '$folder' already exists. Skipping."
+          fi
+        done < "$repos_file"
+        EOF
+
+  links:
+    desc: "Print links to various elody services"
+    dotenv: [".env"]
+    cmds:
+      - clear
+      - echo -e "\n\e[1;32mFRONTEND\e[0m"
+      - echo "Click to open the elody Dashboard http://dashboard.$TRAEFIK_PROJECT_NAMESPACE.localhost:$PROJECT_PORT"
+      - echo "Click to open the elody GraphQL API http://dashboard.$TRAEFIK_PROJECT_NAMESPACE.localhost:$PROJECT_PORT/api/graphql"
+      - echo -e "\n\e[1;32mSERVICES\e[0m"
+      - echo "Click to open the elody Cantaloupe Image Server $IMAGE_API_URL_EXT"
+      - echo "Click to open the elody Collection API $COLLECTION_API_URL_EXT/api/docs"
+      - echo "Click to open the elody Collection API specs $COLLECTION_API_URL_EXT/spec/dams-collection-api-events.html"
+      - echo "Click to open the elody ElasticSearch API http://elasticsearch.$TRAEFIK_PROJECT_NAMESPACE.localhost:$PROJECT_PORT/"
+      - echo "Click to open the elody IIIF manifest $PRESENTATION_API_URL"
+      - echo "Click to open the elody Search API $SEARCH_API_URL_EXT/api/docs"
+      - echo "Click to open the elody Search API specs $SEARCH_API_URL_EXT/spec/dams-search-api.json"
+      - echo "Click to open the elody Storage API $STORAGE_API_URL_EXT/api/docs"
+      - echo "Click to open the elody Storage API specs $STORAGE_API_URL_EXT/spec/dams-storage-api.json"
+      - echo "Click to open the elody Ocr Service $OCR_SERVICE_URL_EXT/api/docs"
+      - echo "Click to open the elody Ocr Service specs $OCR_SERVICE_URL_EXT/spec/inuits-dams-ocr-service.json"
+      - echo -e "\n\e[1;32mTOOLS\e[0m"
+      - echo "Click to open Dozzle http://dozzle.localhost:$PROJECT_PORT"
+      - echo "Click to open Docs http://docs.$TRAEFIK_PROJECT_NAMESPACE.localhost:$PROJECT_PORT"
+      - echo "Click to open Keycloak (admin/admin) http://keycloak.localhost:$PROJECT_PORT/auth"
+      - echo "Click to open Minio (minio/minio_secret) http://minio-console.$TRAEFIK_PROJECT_NAMESPACE.localhost:$PROJECT_PORT"
+      - echo "Click to open RabbitMQ Admin (guest/guest) http://rabbitmq.$TRAEFIK_PROJECT_NAMESPACE.localhost:$PROJECT_PORT"
+      - echo "Click to open Traefik http://traefik.$TRAEFIK_PROJECT_NAMESPACE.localhost:$PROJECT_PORT"
+    silent: true

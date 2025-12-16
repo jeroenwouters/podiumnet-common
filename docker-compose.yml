@@ -1,0 +1,172 @@
+version: "3.4"
+include:
+  - ../../docker-compose-include.yml
+  - ../../docker-compose-include-storage-api.yml
+  - ../../docker-compose-include-filesystem-importer-service.yml
+  - ../../docker-compose-include-transcode-service.yml
+
+services:
+  collection-api:
+    image: inuits-elody-${TRAEFIK_PROJECT_NAMESPACE}-collection-api:local-dev
+    platform: linux/amd64
+    build:
+      context: ../../
+      dockerfile: docker-compose/collection-api/Dockerfile
+      target: development-stage
+      args:
+        PROJECT_FOLDER: ${PROJECT_FOLDER}
+    environment:
+      - DOCKER_BUILDKIT
+
+      - DB_ENGINE
+
+      - MONGODB_HOSTS
+      - MONGODB_PORT
+      - MONGODB_DB_NAME
+
+      - MQ_URL
+      - MQ_EXCHANGE
+      - DURABLE_EXCHANGE
+      - AUTO_DELETE_EXCHANGE
+      - EVENT_DELAY=0
+
+      - COLLECTION_API_URL
+      - IMAGE_API_URL_EXT
+      - JOB_API_URL
+      - STORAGE_API_URL
+      - STORAGE_API_URL_EXT
+
+      - APPS_MANIFEST
+      - AUTO_CREATE_TENANTS
+      - IGNORE_PERMISSIONS
+      - ROLE_SCOPE_MAPPING
+      - TOKEN_SCHEMA
+      - SUPER_ADMIN_ROLE
+      - TENANT_DEFINING_HEADER
+      - TENANT_DEFINING_TYPES
+      - ALLOW_ANONYMOUS_USERS
+      - ALLOWED_ISSUERS
+      - STATIC_JWT
+      - STATIC_ISSUER
+      - STATIC_PUBLIC_KEY
+      - MINIO_BUCKET
+      - APP_ENV=dev
+      - OTEL_SDK_DISABLED
+    volumes:
+      - "../../collection-api/api:/app/api"
+      - "./docker-compose/elody/role_scope_mapping.json:/app/role_scope_mapping.json"
+      - "./docker-compose/elody/token_schema.json:/app/token_schema.json"
+      - "./client-collection-module/api/apps/app_list.json:/app/api/apps/app_list.json"
+      - "./client-collection-module/api/apps/mappers.py:/app/api/apps/mappers.py"
+      - "./client-collection-module/api/apps/permissions.py:/app/api/apps/permissions.py"
+      - "./client-collection-module/api/apps/roles:/app/api/apps/roles"
+      - "./client-collection-module/api/apps/podiumnet:/app/api/apps/podiumnet"
+    networks:
+      elody:
+        aliases:
+          - job-api
+          - collection-api-${PROJECT_FOLDER}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${TRAEFIK_PROJECT_NAMESPACE}-collection-api.service=${TRAEFIK_PROJECT_NAMESPACE}-collection-api"
+      - "traefik.http.routers.${TRAEFIK_PROJECT_NAMESPACE}-collection-api.rule=Host(`collection-api.${PROJECT_DOMAIN}`) && PathPrefix(`/`)" # TODO change Host to api.[...]
+      - "traefik.http.services.${TRAEFIK_PROJECT_NAMESPACE}-collection-api.loadbalancer.server.port=5000"
+      - "traefik.http.routers.${TRAEFIK_PROJECT_NAMESPACE}-job-api.service=${TRAEFIK_PROJECT_NAMESPACE}-job-api"
+      - "traefik.http.routers.${TRAEFIK_PROJECT_NAMESPACE}-job-api.rule=Host(`job-api.${PROJECT_DOMAIN}`) && PathPrefix(`/`)" # TODO change Host to api.[...]
+      - "traefik.http.services.${TRAEFIK_PROJECT_NAMESPACE}-job-api.loadbalancer.server.port=5000"
+    profiles:
+      - backend
+      - import
+
+  dashboard:
+    image: inuits-elody-${TRAEFIK_PROJECT_NAMESPACE}-dashboard:local-dev
+    env_file:
+      # TODO What are the actual environment variables being used here?
+      - ".env"
+    build:
+      context: ../../
+      dockerfile: docker-compose/frontend/dashboard.Dockerfile
+      target: development-stage
+      args:
+        PROJECT_FOLDER: ${PROJECT_FOLDER}
+    environment:
+      # Graphql variables
+      - PORT=4001
+
+      - APOLLO_GRAPHQL_PATH=/api/graphql
+      - APOLLO_INTROSPECTION=true
+      - APOLLO_PLAYGROUND=false
+      - APOLLO_CLIENT_SECRET
+      - APOLLO_SESSION_SECRET
+      - OTEL_SDK_DISABLED
+
+      - OAUTH_BASE_URL
+      - OAUTH_BASE_URL_FRONTEND
+      - OAUTH_CLIENT_ID
+      - OAUTH_TOKEN_ENDPOINT=/protocol/openid-connect/token
+      - OAUTH_AUTH_ENDPOINT=/protocol/openid-connect/auth
+      - OAUTH_API_CODE_ENDPOINT=/api/auth_code
+
+      - COLLECTION_API_URL
+      - CSV_IMPORTER_URL
+      - DAMS_FRONTEND_URL
+      - GRAPHQL_ENDPOINT=/api/graphql
+      - IMAGE_API_URL
+      - IMAGE_API_URL_EXT
+      - SEARCH_API_URL
+      - STORAGE_API_URL
+
+      - STATIC_JWT
+
+      - IGNORE_PERMISSIONS
+      - APPLICATION_TITLE=DAMS
+
+      # Dashboard variables
+      - VUE_APP_AUTH=false
+      - VUE_APP_INDEX=false
+      - VUE_APP_CONFIG_URL=/api/config
+
+      - APP_ENV=dev
+      - NPM_CONFIG_REGISTRY
+      - NPM_CONFIG__AUTH_TOKEN
+      - NPM_CONFIG_ALWAYS_AUTH
+
+    volumes:
+      - "./client-frontend:/app"
+      - "../../modules:/app/inuits-dams-graphql-service/modules"
+      - "../../inuits-dams-pwa:/app/inuits-dams-pwa"
+      - "../../packages:/app/inuits-dams-graphql-service/packages"
+      - "/app/node_modules"
+      - "/app/inuits-dams-pwa/node_modules"
+      - "/app/inuits-dams-graphql-service/node_modules"
+      - "/app/inuits-dams-graphql-service/modules/advancedFiltersModule/node_modules"
+      - "/app/inuits-dams-graphql-service/modules/advancedSearchModule/node_modules"
+      - "/app/inuits-dams-graphql-service/modules/baseGraphql/node_modules"
+      - "/app/inuits-dams-graphql-service/modules/baseModule/node_modules"
+      - "/app/inuits-dams-graphql-service/modules/importModule/node_modules"
+      - "/app/inuits-dams-graphql-service/modules/mediafileModule/node_modules"
+      - "/app/inuits-dams-graphql-service/modules/savedSearchModule/node_modules"
+      - "/app/inuits-dams-graphql-service/generated-types"
+      - "/app/inuits-dams-pwa/src/generated-types"
+      - "/app/packages/session-vue-3-oidc-library/node_modules"
+    networks:
+      elody:
+        aliases:
+          - dashboard-${PROJECT_FOLDER}
+    labels:
+      - "traefik.enable=true"
+      # Graphql Traefik config
+      - "traefik.http.routers.${TRAEFIK_PROJECT_NAMESPACE}-graphql.rule=Host(`dashboard.${PROJECT_DOMAIN}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.${TRAEFIK_PROJECT_NAMESPACE}-graphql.service=${TRAEFIK_PROJECT_NAMESPACE}-graphql"
+      - "traefik.http.services.${TRAEFIK_PROJECT_NAMESPACE}-graphql.loadbalancer.server.port=4001"
+      # Dashboard Traefik config
+      - "traefik.http.routers.${TRAEFIK_PROJECT_NAMESPACE}-dashboard.rule=Host(`dashboard.${PROJECT_DOMAIN}`) && PathPrefix(`/`)"
+      - "traefik.http.routers.${TRAEFIK_PROJECT_NAMESPACE}-dashboard.service=${TRAEFIK_PROJECT_NAMESPACE}-dashboard"
+      - "traefik.http.services.${TRAEFIK_PROJECT_NAMESPACE}-dashboard.loadbalancer.server.port=8080"
+    profiles:
+      - frontend
+
+networks:
+  traefik:
+  elody:
+    name: elody

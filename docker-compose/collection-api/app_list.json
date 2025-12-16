@@ -1,0 +1,15 @@
+{
+  "podiumnet": {
+    "name": "podiumnet",
+    "description": "podiumnet specific extensions",
+    "version": 0.1,
+    "author": "Inuits",
+    "author_email": "developers@inuits.eu",
+    "license": "Proprietary",
+    "resources": ["docs"],
+    "policies": {
+      "authentication": ["api_key_based_policies.api_key_policy"],
+      "authorization": ["super_admin_policy"]
+    }
+  }
+}

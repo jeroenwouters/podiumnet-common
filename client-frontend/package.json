@@ -1,0 +1,26 @@
+{
+  "name": "inuits-frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "generate": "pnpm graphql-code-generator --config ./codegen.ts",
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {
+    "dams": "^0.0.0",
+    "session-vue-3-oidc-library": "0.1.55",
+    "demo-apollo-server-webpack-hmr": "^0.0.1"
+  },
+  "devDependencies": {
+    "@graphql-codegen/add": "^3.2.1",
+    "@graphql-codegen/cli": "^2.16.5",
+    "@graphql-codegen/graphql-modules-preset": "^2.5.12",
+    "@graphql-codegen/typed-document-node": "2.3.13",
+    "@graphql-codegen/typescript": "^2.8.8",
+    "@graphql-codegen/typescript-operations": "^2.5.13",
+    "@graphql-codegen/typescript-resolvers": "^2.7.13",
+    "graphql": "^16.6.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  },
+  "packageManager": "pnpm@7.26.0+sha512.01236116c4daf58a49a1a96719adbc20a32299993fa013add7da31bc1ebe88fd8456bd61f8f61cb13b72e26ae0484fcb7a05903f2e32a616629ec84a8f1c9c38"
+}
