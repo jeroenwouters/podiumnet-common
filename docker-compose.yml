@@ -104,6 +104,7 @@ services:
       - OAUTH_BASE_URL
       - OAUTH_BASE_URL_FRONTEND
       - OAUTH_CLIENT_ID
+      - ALLOW_ANONYMOUS_USERS
       - OAUTH_TOKEN_ENDPOINT=/protocol/openid-connect/token
       - OAUTH_AUTH_ENDPOINT=/protocol/openid-connect/auth
       - OAUTH_API_CODE_ENDPOINT=/api/auth_code
