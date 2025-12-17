@@ -4,8 +4,8 @@ import sys
 admin_password = "admin"
 admin_token_lifespan = 126144000
 admin_username = "admin"
-client_id = "podiumnet-dashboard-elody"
-client_secret = "3ba1d936-67bb-c3b7-1a37-016d528caa0c"
+client_id = "dishacled-wp3-prototype-dashboard-elody"
+client_secret = "b369418d-efbb-4b7e-9a3f-894d72842284"
 keycloak_url = "http://keycloak.localhost:8000"
 
 
@@ -16,13 +16,15 @@ def create_admin_user():
     }
 
     requests.post(
-        f"{keycloak_url}/auth/admin/realms/podiumnet/users", headers=headers, json=json
+        f"{keycloak_url}/auth/admin/realms/dishacled-wp3-prototype-elody/users",
+        headers=headers,
+        json=json,
     )
 
 
 def delete_admin_user():
     requests.delete(
-        f"{keycloak_url}/auth/admin/realms/podiumnet/users/{admin_user_id}",
+        f"{keycloak_url}/auth/admin/realms/dishacled-wp3-prototype-elody/users/{admin_user_id}",
         headers=headers,
     )
 
@@ -42,14 +44,14 @@ def get_admin_access_token():
 
 def get_admin_user_id():
     return requests.get(
-        f"{keycloak_url}/auth/admin/realms/podiumnet/users?username={admin_username}",
+        f"{keycloak_url}/auth/admin/realms/dishacled-wp3-prototype-elody/users?username={admin_username}",
         headers=headers,
     ).json()[0]["id"]
 
 
 def get_public_key():
     keys = requests.get(
-        f"{keycloak_url}/auth/admin/realms/podiumnet/keys",
+        f"{keycloak_url}/auth/admin/realms/dishacled-wp3-prototype-elody/keys",
         headers=headers,
         json=realm_config,
     ).json()["keys"]
@@ -61,7 +63,8 @@ def get_public_key():
 
 def get_realm_config():
     return requests.get(
-        f"{keycloak_url}/auth/admin/realms/podiumnet", headers=headers
+        f"{keycloak_url}/auth/admin/realms/dishacled-wp3-prototype-elody",
+        headers=headers,
     ).json()
 
 
@@ -80,7 +83,8 @@ def get_user_token():
     }
 
     return requests.post(
-        f"{keycloak_url}/auth/realms/podiumnet/protocol/openid-connect/token", data=data
+        f"{keycloak_url}/auth/realms/dishacled-wp3-prototype-elody/protocol/openid-connect/token",
+        data=data,
     ).json()["access_token"]
 
 
@@ -92,7 +96,7 @@ def update_admin_user_password():
     }
 
     requests.put(
-        f"{keycloak_url}/auth/admin/realms/podiumnet/users/{admin_user_id}/reset-password",
+        f"{keycloak_url}/auth/admin/realms/dishacled-wp3-prototype-elody/users/{admin_user_id}/reset-password",
         headers=headers,
         json=json,
     )
@@ -100,7 +104,9 @@ def update_admin_user_password():
 
 def update_realm():
     requests.put(
-        f"{keycloak_url}/auth/admin/realms/podiumnet", headers=headers, json=realm_config
+        f"{keycloak_url}/auth/admin/realms/dishacled-wp3-prototype-elody",
+        headers=headers,
+        json=realm_config,
     )
 
 
@@ -117,7 +123,7 @@ if __name__ == "__main__":
     update_admin_user_password()
     print(f'STATIC_JWT="{get_user_token()}"')
     print(f'STATIC_PUBLIC_KEY="{get_public_key()}"')
-    print(f'STATIC_ISSUER="{keycloak_url}/auth/realms/podiumnet"')
+    print(f'STATIC_ISSUER="{keycloak_url}/auth/realms/dishacled-wp3-prototype-elody"')
     realm_config["accessTokenLifespan"] = original_access_token_lifespan
     realm_config["ssoSessionMaxLifespan"] = original_sso_session_max_lifespan
     update_realm()
